@@ -18,8 +18,10 @@ fn main() -> std::io::Result<()> {
                     break;
                 } else {
                     eprintln!("Writing {r} bytes to stream");
-                    let _w = stream.write_all(&buf);
-                    buf = [0; 16];
+                    eprintln!("Bytes: {buf:?}");
+                    let r_str = String::from_utf8_lossy(&buf);
+                    eprintln!("As String: {r_str}");
+                    let _w = stream.write_all(&buf[..r]);
                 }
             }
 
