@@ -2,4 +2,5 @@
 
 members = [
   "smoke_test",
+  "prime_time",
 ]
