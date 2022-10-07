@@ -1,5 +1,5 @@
 use std::io::prelude::*;
-use std::net::{TcpListener, TcpStream};
+use std::net::TcpListener;
 use std::thread;
 
 fn main() -> std::io::Result<()> {
@@ -10,7 +10,7 @@ fn main() -> std::io::Result<()> {
             eprintln!("Opening connection");
 
             let mut stream = stream.expect("incoming TCP stream");
-            let mut buf = [0u8; 16];
+            let mut buf = [0u8; 32];
 
             while let Ok(r) = stream.read(&mut buf) {
                 if r == 0 {
@@ -18,9 +18,6 @@ fn main() -> std::io::Result<()> {
                     break;
                 } else {
                     eprintln!("Writing {r} bytes to stream");
-                    eprintln!("Bytes: {buf:?}");
-                    let r_str = String::from_utf8_lossy(&buf);
-                    eprintln!("As String: {r_str}");
                     let _w = stream.write_all(&buf[..r]);
                 }
             }
