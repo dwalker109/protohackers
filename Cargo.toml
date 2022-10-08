@@ -3,4 +3,5 @@
 members = [
   "smoke_test",
   "prime_time",
+  "means_to_an_end",
 ]
