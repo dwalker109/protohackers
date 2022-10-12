@@ -4,6 +4,7 @@ members = [
   "smoke_test",
   "prime_time",
   "means_to_an_end",
+  "means_to_an_end_async",
   "budget_chat",
   "budget_chat_async",
   "unusual_database_program",
