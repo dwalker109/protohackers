@@ -8,4 +8,5 @@ members = [
   "budget_chat",
   "budget_chat_async",
   "unusual_database_program",
+  "mob_in_the_middle",
 ]
