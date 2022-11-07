@@ -9,4 +9,5 @@ members = [
   "budget_chat_async",
   "unusual_database_program",
   "mob_in_the_middle",
+  "speed_demon_async",
 ]

@@ -320,6 +320,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "speed_demon_async"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "tokio",
+]
+
+[[package]]
 name = "syn"
 version = "1.0.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
