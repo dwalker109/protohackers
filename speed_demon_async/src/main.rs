@@ -27,28 +27,25 @@ async fn main() {
 
     loop {
         let (frame_reader, frame_writer) = frame_rw(listener.accept().await.unwrap().0);
-        let (out_message_sender, out_message_receiver) = unbounded_channel::<OutMessage>();
+        let (message_sender, message_receiver) = unbounded_channel::<OutMessage>();
 
-        tokio::spawn(handle_messages_to_frames(
-            out_message_receiver,
-            frame_writer,
-        ));
+        tokio::spawn(handle_frames_out(frame_writer, message_receiver));
 
         task::spawn(handle_frames_in(
             frame_reader,
-            out_message_sender,
+            message_sender,
             Arc::clone(&camera_db),
             Arc::clone(&dispatcher_db),
         ));
     }
 }
 
-async fn handle_messages_to_frames(
-    mut out_message_receiver: UnboundedReceiver<OutMessage>,
+async fn handle_frames_out(
     mut frame_writer: FrameWriter,
+    mut message_receiver: UnboundedReceiver<OutMessage>,
 ) {
     loop {
-        if let Some(msg) = out_message_receiver.recv().await {
+        if let Some(msg) = message_receiver.recv().await {
             frame_writer.write(Frame::from(msg)).await.ok();
         }
     }
@@ -69,7 +66,7 @@ async fn handle_heartbeat(sender: UnboundedSender<OutMessage>, interval: u32) {
 
 async fn handle_frames_in(
     mut frame_reader: FrameReader,
-    out_message_sender: UnboundedSender<OutMessage>,
+    message_sender: UnboundedSender<OutMessage>,
     camera_db: CameraDb,
     dispatcher_db: DispatcherDb,
 ) {
@@ -79,11 +76,11 @@ async fn handle_frames_in(
         if let Some(init_frame) = init_frame {
             match InMessage::from(init_frame) {
                 InMessage::WantHeartbeat(msg) => {
-                    tokio::spawn(handle_heartbeat(out_message_sender.clone(), msg.interval));
+                    tokio::spawn(handle_heartbeat(message_sender.clone(), msg.interval));
                 }
 
                 InMessage::IAmCamera(_) | InMessage::IAmDispatcher(_) if client_identified => {
-                    out_message_sender
+                    message_sender
                         .send(OutMessage::Error(Error::from(
                             "client tried to identify twice".to_string(),
                         )))
@@ -106,12 +103,12 @@ async fn handle_frames_in(
                                 }
                                 InMessage::WantHeartbeat(msg) => {
                                     tokio::spawn(handle_heartbeat(
-                                        out_message_sender.clone(),
+                                        message_sender.clone(),
                                         msg.interval,
                                     ));
                                 }
                                 _ => {
-                                    out_message_sender
+                                    message_sender
                                         .send(OutMessage::Error(Error::from(
                                             "bad camera plate request".to_string(),
                                         )))
@@ -127,15 +124,15 @@ async fn handle_frames_in(
                     dispatcher_db
                         .lock()
                         .unwrap()
-                        .push((dispatcher, out_message_sender.clone()));
+                        .push((dispatcher, message_sender.clone()));
                 }
 
                 InMessage::Error(err) => {
-                    out_message_sender.send(OutMessage::Error(err)).ok();
+                    message_sender.send(OutMessage::Error(err)).ok();
                 }
 
                 _ => {
-                    out_message_sender
+                    message_sender
                         .send(OutMessage::Error(Error::from(
                             "bad client connect frame request".to_string(),
                         )))
