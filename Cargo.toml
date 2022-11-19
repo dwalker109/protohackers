@@ -10,4 +10,5 @@ members = [
   "unusual_database_program",
   "mob_in_the_middle",
   "speed_demon_async",
+  "line_reversal_async",
 ]
