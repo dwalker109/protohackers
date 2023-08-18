@@ -12,4 +12,5 @@ members = [
   "speed_demon_async",
   "line_reversal_async",
   "insecure_sockets_layer_async",
+  "job_centre_async",
 ]

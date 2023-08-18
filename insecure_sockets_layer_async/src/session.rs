@@ -55,12 +55,12 @@ impl Decoder for CipherSpec {
 
         let op = match src.get_u8() {
             00 => Self::Item::End,
-            01 => Self::Item::Rev,
-            02 if !src.is_empty() => Self::Item::XorN(src.get_u8()),
-            03 => Self::Item::XorPos,
-            04 if !src.is_empty() => Self::Item::AddN(src.get_u8()),
-            05 => Self::Item::AddPos,
-            02 | 04 => return Ok(None),
+            1 => Self::Item::Rev,
+            2 if !src.is_empty() => Self::Item::XorN(src.get_u8()),
+            3 => Self::Item::XorPos,
+            4 if !src.is_empty() => Self::Item::AddN(src.get_u8()),
+            5 => Self::Item::AddPos,
+            2 | 4 => return Ok(None),
             _ => {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidData,
