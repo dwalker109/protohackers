@@ -1,4 +1,5 @@
 [workspace]
+resolver = "2"
 
 members = [
   "smoke_test",
@@ -13,4 +14,5 @@ members = [
   "line_reversal_async",
   "insecure_sockets_layer_async",
   "job_centre_async",
+  "voracious_code_storage",
 ]
