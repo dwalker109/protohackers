@@ -15,4 +15,5 @@ members = [
   "insecure_sockets_layer_async",
   "job_centre_async",
   "voracious_code_storage",
+  "pest_control_async"
 ]
